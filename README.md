@@ -1,6 +1,11 @@
 # Todos
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.1.
+This is a collaborative todo application. It features the following:
+
+ - shared list of todos
+    - collaborators can create new todos
+ - prioritization of todos
+ - individual ownership of todos once in progress
 
 ## Development server
 
