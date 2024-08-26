@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, delay, map, take, throwError } from 'rxjs';
+import { from, map, Observable, switchMap, throwError } from 'rxjs';
+import { addDoc, arrayRemove, arrayUnion, collection, collectionData, CollectionReference, deleteDoc, doc, Firestore, updateDoc } from '@angular/fire/firestore';
 
 import { Todo } from './todo';
 import { makeTodo } from './make-todo';
@@ -8,115 +9,63 @@ import { makeTodo } from './make-todo';
   providedIn: 'root'
 })
 export class TodosService {
+  private todosCollection: CollectionReference<Todo>;
 
-  private todosSubject = new BehaviorSubject<Todo[]>([
-    {
-      ...makeTodo('Barrer la casa'),
-      stars: ['yeiniel', 'susana']
-    },
-    {
-      ...makeTodo('Lavar los platos'),
-      stars: ['yeiniel', 'jj'],
-      status: 'in-progress',
-      lastUpdatedBy: 'susana'
-    },
-    {
-      ...makeTodo('Aspirar el piso'),
-      stars: ['yeiniel', 'susana'],
-      status: 'done'
-    },
-  ]);
+  constructor(firestore: Firestore) {
+    this.todosCollection = collection(firestore, 'todos') as CollectionReference<Todo>;
+  }
 
   public getTodos() {
-    return this.todosSubject.asObservable().pipe(
-      map(todos => todos
+    return (collectionData(this.todosCollection) as Observable<Todo[]>).pipe(
+      map((todos: Todo[]) => todos
           .sort((a, b) => b.stars.length - a.stars.length)
-          .sort((a, b) => (b.status === 'done' ? 0 : 1) - (a.status === 'done' ? 0 : 1))),
-      delay(500)
+          .sort((a, b) => (b.status === 'done' ? 0 : 1) - (a.status === 'done' ? 0 : 1)))
     );
   }
 
   public addTodo(todo: Todo) {
-    this.todosSubject.next([
-      ...this.todosSubject.getValue(),
-      todo
-    ]);
-
-    return this.todosSubject.asObservable().pipe(take(1));
+    return from(addDoc(this.todosCollection, todo)).pipe(
+      switchMap((docRef) => updateDoc(docRef, {
+        id: docRef.id
+      }))
+    );
   }
 
   public toggleStar(todo: Todo, userId: string) {
-    const todos = this.todosSubject.getValue();
-    const index = todos.findIndex(t => t.label === todo.label)!;
+    const stars = todo.stars.includes(userId)
+        ? arrayRemove(userId)
+        : arrayUnion(userId)
 
-    todo = {
-      ...todo,
-      stars: todo.stars.includes(userId)
-        ? todo.stars.filter(id => id !== userId)
-        : [...todo.stars, userId]
-    };
-
-    this.todosSubject.next([
-      ...todos.slice(0, index),
-      todo,
-      ...todos.slice(index + 1)
-    ]);
-
-    return this.todosSubject.asObservable().pipe(take(1));
+    return from(updateDoc(doc(this.todosCollection, todo.id), {
+      stars
+    }));
   }
 
   public moveTodoToInProgress(todo: Todo, userId: string) {
-    const todos = this.todosSubject.getValue();
-    const index = todos.findIndex(t => t.label === todo.label)!;
-
     // check task is pending
     if (todo.status !== 'pending') {
       return throwError(() => new Error('Task is not pending'));
     }
 
-    todo = {
-      ...todo,
+    return from(updateDoc(doc(this.todosCollection, todo.id), {
       status: 'in-progress',
       lastUpdatedBy: userId
-    };
-
-    this.todosSubject.next([
-      ...todos.slice(0, index),
-      todo,
-      ...todos.slice(index + 1)
-    ]);
-
-    return this.todosSubject.asObservable().pipe(take(1));
+    }));
   }
 
   public moveTodoToDone(todo: Todo, userId: string) {
-    const todos = this.todosSubject.getValue();
-    const index = todos.findIndex(t => t.label === todo.label)!;
-
     // check task is pending
     if (todo.status !== 'in-progress' || todo.lastUpdatedBy !== userId) {
       return throwError(() => new Error('Task is not in-progress or in-progress by someone else'));
     }
 
-    todo = {
-      ...todo,
+    return from(updateDoc(doc(this.todosCollection, todo.id), {
       status: 'done',
       lastUpdatedBy: userId
-    };
-
-    this.todosSubject.next([
-      ...todos.slice(0, index),
-      todo,
-      ...todos.slice(index + 1)
-    ]);
-
-    return this.todosSubject.asObservable().pipe(take(1));
+    }));
   }
 
   public removeTodo(todo: Todo) {
-    const todos = this.todosSubject.getValue().filter(t => t.label !== todo.label);
-    this.todosSubject.next(todos);
-
-    return this.todosSubject.asObservable().pipe(take(1));
+    return from(deleteDoc(doc(this.todosCollection, todo.id)));
   }
 }

@@ -1,4 +1,5 @@
 export type Todo = {
+    id?: string;
     label: string;
     stars: string[];
     status: 'pending' | 'in-progress' | 'done';
