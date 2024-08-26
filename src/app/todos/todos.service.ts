@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { from, map, Observable, switchMap, throwError } from 'rxjs';
-import { addDoc, arrayRemove, arrayUnion, collection, collectionData, CollectionReference, deleteDoc, doc, Firestore, updateDoc } from '@angular/fire/firestore';
+import { addDoc, arrayRemove, arrayUnion, collection, collectionData, CollectionReference, deleteDoc, doc, Firestore, getDoc, updateDoc } from '@angular/fire/firestore';
 
 import { Todo } from './todo';
 import { makeTodo } from './make-todo';
@@ -31,17 +31,17 @@ export class TodosService {
     );
   }
 
-  public toggleStar(todo: Todo, userId: string) {
+  public toggleStar(todo: Pick<Todo, 'id' | 'stars'>, userId: string) {
     const stars = todo.stars.includes(userId)
         ? arrayRemove(userId)
-        : arrayUnion(userId)
+        : arrayUnion(userId);
 
     return from(updateDoc(doc(this.todosCollection, todo.id), {
       stars
     }));
   }
 
-  public moveTodoToInProgress(todo: Todo, userId: string) {
+  public moveTodoToInProgress(todo: Pick<Todo, 'id' | 'status'>, userId: string) {
     // check task is pending
     if (todo.status !== 'pending') {
       return throwError(() => new Error('Task is not pending'));
@@ -53,7 +53,7 @@ export class TodosService {
     }));
   }
 
-  public moveTodoToDone(todo: Todo, userId: string) {
+  public moveTodoToDone(todo: Pick<Todo, 'id' | 'status' | 'lastUpdatedBy'>, userId: string) {
     // check task is pending
     if (todo.status !== 'in-progress' || todo.lastUpdatedBy !== userId) {
       return throwError(() => new Error('Task is not in-progress or in-progress by someone else'));
@@ -65,7 +65,7 @@ export class TodosService {
     }));
   }
 
-  public removeTodo(todo: Todo) {
+  public removeTodo(todo: Pick<Todo, 'id'>) {
     return from(deleteDoc(doc(this.todosCollection, todo.id)));
   }
 }

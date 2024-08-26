@@ -48,38 +48,27 @@ export class IndexPage {
   }
 
   addTodo(todo: Todo) {
-    this.todosService.addTodo(todo).subscribe({ next: () => undefined, error: err => alert(err) });
+    this.todosService.addTodo(todo)
+      .subscribe({ next: () => undefined, error: err => alert(err) });
   }
 
   toggleStar(item: Item) {
-    this.todosService.getTodos().pipe(
-      take(1),
-      map(todos => todos.find(todo => todo.label === item.label)!),
-      switchMap(todo => this.todosService.toggleStar(todo, this.userIdSubject.getValue()!))
-    ).subscribe({ next: () => undefined, error: err => alert(err) });
+    this.todosService.toggleStar(item, this.userIdSubject.getValue()!)
+      .subscribe({ next: () => undefined, error: err => alert(err) });
   }
 
   moveTodoToInProgress(item: Item) {
-    this.todosService.getTodos().pipe(
-      take(1),
-      map(todos => todos.find(todo => todo.label === item.label)!),
-      switchMap(todo => this.todosService.moveTodoToInProgress(todo, this.userIdSubject.getValue()!))
-    ).subscribe({ next: () => undefined, error: err => alert(err) });
+    this.todosService.moveTodoToInProgress(item, this.userIdSubject.getValue()!)
+      .subscribe({ next: () => undefined, error: err => alert(err) });
   }
 
   moveTodoToDone(item: Item) {
-    this.todosService.getTodos().pipe(
-      take(1),
-      map(todos => todos.find(todo => todo.label === item.label)!),
-      switchMap(todo => this.todosService.moveTodoToDone(todo, this.userIdSubject.getValue()!))
-    ).subscribe({ next: () => undefined, error: err => alert(err) });
+    this.todosService.moveTodoToDone(item, this.userIdSubject.getValue()!)
+      .subscribe({ next: () => undefined, error: err => alert(err) });
   }
 
   removeTodo(item: Item) {
-    this.todosService.getTodos().pipe(
-      take(1),
-      map(todos => todos.find(todo => todo.label === item.label)!),
-      switchMap(todo => this.todosService.removeTodo(todo))
-    ).subscribe({ next: () => undefined, error: err => alert(err) });
+    this.todosService.removeTodo(item)
+      .subscribe({ next: () => undefined, error: err => alert(err) });
   }
 }

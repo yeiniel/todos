@@ -1,6 +1,6 @@
 import { Todo } from "../todo";
 
-export type Item = Omit<Todo, 'stars'> & {
+export type Item = Todo & {
     starred: boolean;
     inProgress: boolean;
 }
