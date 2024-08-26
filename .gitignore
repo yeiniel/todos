@@ -37,7 +37,8 @@ yarn-error.log
 testem.log
 /typings
 
-# Firebase emulators
+# Firebase and its emulators
+/.firebase
 /firebase-debug.log
 /firestore-debug.log
 /ui-debug.log
