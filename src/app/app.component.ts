@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+import { LogoutComponent } from './auth';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, LogoutComponent],
   template: `
-    <h1>Todos</h1>
+    <h1>Todos <app-auth-logout /></h1>
 
     <router-outlet />
   `,

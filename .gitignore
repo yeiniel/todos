@@ -37,6 +37,11 @@ yarn-error.log
 testem.log
 /typings
 
+# Firebase emulators
+/firebase-debug.log
+/firestore-debug.log
+/ui-debug.log
+
 # System files
 .DS_Store
 Thumbs.db
