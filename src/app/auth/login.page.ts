@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
+import { take } from 'rxjs';
+
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-auth-login',
@@ -35,7 +37,7 @@ export class LoginPage {
   protected login() {
     const { email, password } = this.loginForm.value;
 
-    this.authService.login(email, password).subscribe({
+    this.authService.login(email, password).pipe(take(1)).subscribe({
       next: () => this.router.navigateByUrl('/'),
       error: err => alert(err.message)
     });
