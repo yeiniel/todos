@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { map } from 'rxjs';
+import { map, take } from 'rxjs';
 import { Router } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
 
 import { AuthService } from './auth.service';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-auth-logout',
@@ -23,8 +23,8 @@ export class LogoutComponent {
     this.isAuthenticated$ = this.authService.getUser().pipe(map(user => !!user));
   }
 
-  protected logout() {
-    this.authService.logout().subscribe({
+  protected async logout() {
+    this.authService.logout().pipe(take(1)).subscribe({
       next: () => this.router.navigateByUrl('/auth'),
       error: (err) => alert(err.message)
     });

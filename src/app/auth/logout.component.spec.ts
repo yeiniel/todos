@@ -1,11 +1,11 @@
-import { MockBuilder, MockedComponentFixture, MockInstance, MockRender, ngMocks } from "ng-mocks";
-import { BehaviorSubject, EMPTY, Subject } from "rxjs";
+import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
+import { BehaviorSubject, Subject } from "rxjs";
+import { AsyncPipe } from "@angular/common";
+import { Router } from "@angular/router";
 
 import { LogoutComponent } from "./logout.component";
 import { AuthService } from "./auth.service";
 import { User } from "./user";
-import { AsyncPipe } from "@angular/common";
-import { Router } from "@angular/router";
 
 describe(LogoutComponent.name, () => {
     let userSubject: Subject<User | null>;
