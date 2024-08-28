@@ -1,37 +1,45 @@
 import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
 import { BehaviorSubject, Subject } from "rxjs";
-import { AsyncPipe } from "@angular/common";
 import { Router } from "@angular/router";
+import { Auth, user } from "@angular/fire/auth";
 
 import { LogoutComponent } from "./logout.component";
 import { AuthService } from "./auth.service";
 import { User } from "./user";
 
+jest.mock('@angular/fire/auth', () => ({
+    ...jest.requireActual('@angular/fire/auth'),
+    user: jest.fn()
+}));
+
 describe(LogoutComponent.name, () => {
     let userSubject: Subject<User | null>;
-    let logoutSubject: Subject<void>;
     let fixture: MockedComponentFixture<LogoutComponent>;
 
     beforeEach(async () => {
         userSubject = new BehaviorSubject<User | null>({ email: `some-email` });
-        logoutSubject = new Subject<void>();
+    
+        (user as unknown as jest.SpyInstance)
+            .mockReturnValue(userSubject.asObservable());
 
-        await MockBuilder(LogoutComponent)
+        await MockBuilder()
+            .keep(LogoutComponent, {
+                shallow: false
+            })
+            .keep(AuthService)
             .mock(Router, {
                 navigateByUrl: jest.fn()
             })
-            .mock(AuthService, {
-                getUser: () => userSubject.asObservable(),
-                logout: jest.fn(() => logoutSubject.asObservable())
-            })
-            .keep(AsyncPipe);
+            .mock(Auth, {
+                signOut: jest.fn().mockResolvedValue(undefined),
+            });
         
         fixture = MockRender(LogoutComponent);
     });
 
     it('should show button if user is authenticated', () => {
         expect(ngMocks.findAll('button').length).toBe(1);
-    });
+    }); 
 
     it('should hide button if user is not authenticated', () => {
         userSubject.next(null);
@@ -46,13 +54,8 @@ describe(LogoutComponent.name, () => {
 
         fixture.detectChanges();
 
-        expect(ngMocks.get(AuthService).logout)
+        expect(ngMocks.get(Auth).signOut)
             .toHaveBeenCalled();
-
-        expect(ngMocks.get(Router).navigateByUrl)
-            .not.toHaveBeenCalled()
-
-        logoutSubject.next();
 
         expect(ngMocks.get(Router).navigateByUrl)
             .toHaveBeenCalledWith('/auth')

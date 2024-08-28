@@ -1,24 +1,30 @@
 import { MockBuilder, MockedComponentFixture, MockRender, ngMocks } from "ng-mocks";
 import { Router } from "@angular/router";
-import { Observable, of } from "rxjs";
+import { Auth, signInWithEmailAndPassword } from "@angular/fire/auth";
+import { FormBuilder } from "@angular/forms";
 
 import { LoginPage } from "./login.page";
 import { AuthService } from "./auth.service";
-import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
-import { UserCredential } from "@angular/fire/auth";
+
+jest.mock('@angular/fire/auth', () => ({
+    ...jest.requireActual('@angular/fire/auth'),
+    signInWithEmailAndPassword: jest.fn().mockResolvedValue(undefined),
+}));
 
 describe(LoginPage.name, () => {
     let fixture: MockedComponentFixture<LoginPage>;
 
     beforeEach(async () => {
-        await MockBuilder(LoginPage)
+        await MockBuilder()
+            .keep(LoginPage, {
+                shallow: false
+            })
+            .keep(AuthService)
             .mock(Router, {
                 navigateByUrl: jest.fn()
             })
-            .mock(AuthService, {
-                login: jest.fn(() => of(undefined) as unknown as Observable<UserCredential>)
-            })
-            .keep(ReactiveFormsModule)
+            .mock(Auth)
+            .mock(signInWithEmailAndPassword, jest.fn())
             .keep(FormBuilder);
 
         fixture = MockRender(LoginPage);
@@ -37,8 +43,8 @@ describe(LoginPage.name, () => {
 
         fixture.detectChanges();
 
-        expect(ngMocks.get(AuthService).login)
-            .toHaveBeenCalledWith(email, password);
+        expect(signInWithEmailAndPassword)
+            .toHaveBeenCalledWith(ngMocks.get(Auth), email, password);
 
         expect(ngMocks.get(Router).navigateByUrl)
             .toHaveBeenCalledWith('/')
