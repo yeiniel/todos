@@ -14,7 +14,11 @@ import { Item } from './item';
       }
     </ul>
   `,
-  styles: ``,
+  styles: `
+  ul {
+    padding-left: 0px;
+  }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListComponent {
