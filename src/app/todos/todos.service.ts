@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { from, map, Observable, switchMap, throwError } from 'rxjs';
-import { addDoc, arrayRemove, arrayUnion, collection, collectionData, CollectionReference, deleteDoc, doc, Firestore, getDoc, updateDoc } from '@angular/fire/firestore';
+import { addDoc, arrayRemove, arrayUnion, collection, collectionData, CollectionReference, deleteDoc, doc, Firestore, updateDoc } from '@angular/fire/firestore';
 
 import { Todo } from './todo';
-import { makeTodo } from './make-todo';
 
 @Injectable({
   providedIn: 'root'

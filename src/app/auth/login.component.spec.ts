@@ -3,7 +3,7 @@ import { Router } from "@angular/router";
 import { Auth, signInWithEmailAndPassword } from "@angular/fire/auth";
 import { FormBuilder } from "@angular/forms";
 
-import { LoginPage } from "./login.page";
+import { LoginComponent } from "./login.component";
 import { AuthService } from "./auth.service";
 
 jest.mock('@angular/fire/auth', () => ({
@@ -11,12 +11,12 @@ jest.mock('@angular/fire/auth', () => ({
     signInWithEmailAndPassword: jest.fn().mockResolvedValue(undefined),
 }));
 
-describe(LoginPage.name, () => {
-    let fixture: MockedComponentFixture<LoginPage>;
+describe(LoginComponent.name, () => {
+    let fixture: MockedComponentFixture<LoginComponent>;
 
     beforeEach(async () => {
         await MockBuilder()
-            .keep(LoginPage, {
+            .keep(LoginComponent, {
                 shallow: false
             })
             .keep(AuthService)
@@ -27,7 +27,7 @@ describe(LoginPage.name, () => {
             .mock(signInWithEmailAndPassword, jest.fn())
             .keep(FormBuilder);
 
-        fixture = MockRender(LoginPage);
+        fixture = MockRender(LoginComponent);
     });
 
     it('should exist', () => {

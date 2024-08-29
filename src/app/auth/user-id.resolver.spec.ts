@@ -1,5 +1,5 @@
 import { MockBuilder, ngMocks } from "ng-mocks";
-import { firstValueFrom, of } from "rxjs";
+import { firstValueFrom, Observable, of } from "rxjs";
 import { EnvironmentInjector, runInInjectionContext } from "@angular/core";
 import { Auth, user } from "@angular/fire/auth";
 
@@ -29,7 +29,7 @@ describe('userIdResolver', () => {
         const userId$ = runInInjectionContext(
             ngMocks.get(EnvironmentInjector),
             () => {
-                return (userIdResolver as Function)();
+                return (userIdResolver as unknown as () => Observable<User>)();
             }
         )
 

@@ -10,22 +10,22 @@ import { NgClass } from '@angular/common';
   template: `
     <li [ngClass]="item.status">
       @if (item.starred) {
-        <span (click)="toggleStar.emit()">⭐</span>
+        <button (click)="toggleStar.emit()">⭐</button>
       } @else {
-        <span (click)="toggleStar.emit()">☆</span>
+        <button (click)="toggleStar.emit()">☆</button>
       }  
 
       <span>{{ item.label }}</span>
 
       @if (item.status === 'pending') {
-        <span (click)="moveToInProgress.emit()">🔒</span>
+        <button (click)="moveToInProgress.emit()">🔒</button>
       }
 
       @if (item.inProgress) {
-        <span (click)="moveToDone.emit()">✓</span>
+        <button (click)="moveToDone.emit()">✓</button>
       }
       
-      <span (click)="remove.emit()">&#x274C;</span>
+      <button (click)="remove.emit()">&#x274C;</button>
     </li>
   `,
   styles: `

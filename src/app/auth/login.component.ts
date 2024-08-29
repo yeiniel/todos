@@ -24,7 +24,7 @@ import { AuthService } from './auth.service';
   `,
   styles: ``
 })
-export class LoginPage {
+export class LoginComponent {
   protected loginForm: FormGroup;
 
   constructor(formBuilder: FormBuilder, private authService: AuthService, private router: Router) {

@@ -4,6 +4,6 @@ export function makeTodo(label: Todo['label']) {
     return {
         label,
         stars: [],
-        status: 'pending' as 'pending'
+        status: 'pending' as const
     }
 }

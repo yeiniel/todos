@@ -1,11 +1,11 @@
 import { Routes } from "@angular/router";
 
-import { IndexPage } from "./index.page";
+import { TodosComponent } from "./todos.component";
 
 export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        component: IndexPage
+        component: TodosComponent
     }
 ];

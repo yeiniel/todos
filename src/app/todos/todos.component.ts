@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable } from 'rxjs';
 
 import { Todo } from './todo';
 import { TodosService } from './todos.service';
@@ -21,7 +21,7 @@ import { NewComponent } from './new.component';
   `,
   styles: ``
 })
-export class IndexPage {
+export class TodosComponent {
   private readonly userIdSubject = new BehaviorSubject<string | undefined>(undefined);
 
   @Input() public set userId(userId: string | undefined) {
